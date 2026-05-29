@@ -1,0 +1,708 @@
+{
+  "datasets": [
+    {
+      "name": "abf498f9",
+      "displayName": "event_log_finpay_etl_pipeline",
+      "config": {
+        "version": "1.1",
+        "source": "fintech_finpay.observability.event_log_finpay_etl_pipeline",
+        "dimensions": [
+          {
+            "name": "id",
+            "expr": "source.id",
+            "displayName": "Id"
+          },
+          {
+            "name": "sequence",
+            "expr": "source.sequence",
+            "displayName": "Sequence"
+          },
+          {
+            "name": "origin",
+            "expr": "source.origin",
+            "displayName": "Origin"
+          },
+          {
+            "name": "timestamp",
+            "expr": "source.timestamp",
+            "displayName": "Timestamp"
+          },
+          {
+            "name": "message",
+            "expr": "source.message",
+            "displayName": "Message"
+          },
+          {
+            "name": "level",
+            "expr": "source.level",
+            "displayName": "Level"
+          },
+          {
+            "name": "maturity_level",
+            "expr": "source.maturity_level",
+            "displayName": "Maturity Level"
+          },
+          {
+            "name": "error",
+            "expr": "source.error",
+            "displayName": "Error"
+          },
+          {
+            "name": "details",
+            "expr": "source.details",
+            "displayName": "Details"
+          },
+          {
+            "name": "event_type",
+            "expr": "source.event_type",
+            "displayName": "Event Type"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "53654ede",
+      "displayName": "quarantine",
+      "config": {
+        "version": "1.1",
+        "source": "fintech_finpay.silver.quarantine",
+        "dimensions": [
+          {
+            "name": "source_name",
+            "expr": "source.source_name",
+            "displayName": "Source Name"
+          },
+          {
+            "name": "reject_reason",
+            "expr": "source.reject_reason",
+            "displayName": "Reject Reason"
+          },
+          {
+            "name": "error_column",
+            "expr": "source.error_column",
+            "displayName": "Error Column"
+          },
+          {
+            "name": "processed_at",
+            "expr": "source.processed_at",
+            "displayName": "Processed At"
+          },
+          {
+            "name": "raw_record",
+            "expr": "source.raw_record",
+            "displayName": "Raw Record"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "processed_records_by_layer",
+      "displayName": "Processed Records by Layer",
+      "config": {
+        "version": "1.1",
+        "source": "WITH bronze_records AS (\n  SELECT 'Bronze' AS layer, 'merchants' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.bronze.merchants\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Bronze' AS layer, 'transactions' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.bronze.transactions\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Bronze' AS layer, 'users' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.bronze.users\n  GROUP BY _ingested_at\n), silver_records AS (\n  SELECT 'Silver' AS layer, 'merchants_silver' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.silver.merchants_silver\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Silver' AS layer, 'transactions_silver' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.silver.transactions_silver\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Silver' AS layer, 'users_silver' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.silver.users_silver\n  GROUP BY _ingested_at\n), gold_records AS (\n  SELECT 'Gold' AS layer, 'dim_channel' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.gold.dim_channel\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Gold' AS layer, 'dim_date' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.gold.dim_date\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Gold' AS layer, 'dim_merchant' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.gold.dim_merchant\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Gold' AS layer, 'dim_user' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.gold.dim_user\n  GROUP BY _ingested_at\n  UNION ALL\n  SELECT 'Gold' AS layer, 'fact_transactions' AS table_name, _ingested_at, COUNT(*) AS record_count\n  FROM fintech_finpay.gold.fact_transactions\n  GROUP BY _ingested_at\n) SELECT * FROM bronze_records UNION ALL SELECT * FROM silver_records UNION ALL SELECT * FROM gold_records\n",
+        "dimensions": [
+          {
+            "name": "layer",
+            "expr": "layer",
+            "displayName": "Layer"
+          },
+          {
+            "name": "table_name",
+            "expr": "table_name",
+            "displayName": "Table Name"
+          },
+          {
+            "name": "ingested_at",
+            "expr": "_ingested_at",
+            "displayName": "Ingested At"
+          }
+        ],
+        "measures": [
+          {
+            "name": "total_records",
+            "expr": "SUM(record_count)",
+            "displayName": "Total Records"
+          },
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "displayName": "Count"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "e7a25675",
+      "displayName": "observability",
+      "layout": [
+        {
+          "widget": {
+            "name": "total_processed_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "measure(total_records)",
+                      "expression": "MEASURE(`total_records`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Total Records Processed",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(total_records)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "rejected_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "53654ede",
+                  "fields": [
+                    {
+                      "name": "measure(count)",
+                      "expression": "MEASURE(`count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Rejected Records",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(count)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "records_by_layer_bar",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "measure(total_records)",
+                      "expression": "MEASURE(`total_records`)"
+                    },
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Records by Layer",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "measure(total_records)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "layer",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "records_by_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    },
+                    {
+                      "name": "measure(total_records)",
+                      "expression": "MEASURE(`total_records`)"
+                    },
+                    {
+                      "name": "table_name",
+                      "expression": "`table_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Records by Table",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "measure(total_records)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "table_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "layer",
+                  "legend": {
+                    "position": "right"
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "rejected_by_source",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "53654ede",
+                  "fields": [
+                    {
+                      "name": "measure(count)",
+                      "expression": "MEASURE(`count`)"
+                    },
+                    {
+                      "name": "source_name",
+                      "expression": "`source_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Rejected Records by Source",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "measure(count)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "source_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "rejected_details_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "53654ede",
+                  "fields": [
+                    {
+                      "name": "source_name",
+                      "expression": "`source_name`"
+                    },
+                    {
+                      "name": "reject_reason",
+                      "expression": "`reject_reason`"
+                    },
+                    {
+                      "name": "error_column",
+                      "expression": "`error_column`"
+                    },
+                    {
+                      "name": "processed_at",
+                      "expression": "`processed_at`"
+                    },
+                    {
+                      "name": "measure(count)",
+                      "expression": "MEASURE(`count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "rowsPerPage": 20,
+              "frame": {
+                "title": "Rejected Records Details",
+                "showTitle": true
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "source_name"
+                  },
+                  {
+                    "fieldName": "reject_reason"
+                  },
+                  {
+                    "fieldName": "error_column"
+                  },
+                  {
+                    "fieldName": "processed_at"
+                  },
+                  {
+                    "fieldName": "measure(count)"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "timeline_line",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    },
+                    {
+                      "name": "ingested_at",
+                      "expression": "`ingested_at`"
+                    },
+                    {
+                      "name": "measure(total_records)",
+                      "expression": "MEASURE(`total_records`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Records Over Time",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "ingested_at",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_records)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "layer",
+                  "legend": {
+                    "position": "right"
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "dashboard_description",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## FinPay ETL Pipeline - Observability Dashboard\n",
+                "\n",
+                "Este panel ofrece una supervisión y observabilidad completas de la canalización ETL de FinPay en las capas Bronze, Silver y Gold.\n",
+                "\n",
+                "### Key Metrics\n",
+                "\n",
+                "* Total de registros procesados: recuento agregado de todos los registros procesados con éxito en todas las capas\n",
+                "* Registros rechazados: recuento de registros que no cumplieron con los requisitos de calidad y fueron puestos en cuarentena\n",
+                "\n",
+                "### Features\n",
+                "\n",
+                "* Filtros globales: filtrar por rango de fechas de ingestión y capa (Bronze/Silver /Gold)\n",
+                "* Distribución por capas: desglose visual de los registros por capa y tabla\n",
+                "* Supervisión de la calidad: seguimiento de los registros rechazados por origen y motivo\n",
+                "* Análisis cronológico: supervisa las tendencias de procesamiento a lo largo del tiempo\n",
+                "\n",
+                "### Data Sources\n",
+                "\n",
+                "* Capa Bronze: merchants, transactions, users\n",
+                "* Capa Silver: merchants\\_silver, transactions\\_silver, users\\_silver\n",
+                "* Capa Gold: dim\\_channel, dim\\_date, dim\\_merchant, dim\\_user, fact\\_transactions\n",
+                "* Cuarentena: fintech\\_finpay.silver.quarantine<br>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 12,
+            "height": 4
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "global_filters",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "date_range_filter",
+            "queries": [
+              {
+                "name": "dashboards/01f15a122d0c177fa919d95e21fdc74b/datasets/01f15a1bdbc01e489b6191238a3e8b91_ingested_at",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "ingested_at",
+                      "expression": "`ingested_at`"
+                    },
+                    {
+                      "name": "ingested_at_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Ingestion Date Range",
+                "showTitle": true
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "ingested_at",
+                    "queryName": "dashboards/01f15a122d0c177fa919d95e21fdc74b/datasets/01f15a1bdbc01e489b6191238a3e8b91_ingested_at"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "layer_filter",
+            "queries": [
+              {
+                "name": "dashboards/01f15a122d0c177fa919d95e21fdc74b/datasets/01f15a1bdbc01e489b6191238a3e8b91_layer",
+                "query": {
+                  "datasetName": "processed_records_by_layer",
+                  "fields": [
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    },
+                    {
+                      "name": "layer_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "scale": {
+                "type": "categorical",
+                "sort": {
+                  "by": "natural-order"
+                }
+              },
+              "frame": {
+                "title": "Layer",
+                "showTitle": true
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "layer",
+                    "queryName": "dashboards/01f15a122d0c177fa919d95e21fdc74b/datasets/01f15a1bdbc01e489b6191238a3e8b91_layer"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

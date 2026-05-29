@@ -1,0 +1,9 @@
+{
+  "merchant_id": "STRING",
+  "merchant_name": "STRING",
+  "category" : "STRING",
+  "country": "STRING" ,
+  "affiliation_date": "STRING",
+  "status": "STRING",
+  "risk_level": "STRING"
+}

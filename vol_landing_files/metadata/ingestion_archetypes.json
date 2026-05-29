@@ -1,0 +1,41 @@
+[
+  {
+    "source_name": "transactions",
+    "source_path": "/Volumes/fintech_finpay/default/vol_landing/transactions/",
+    "file_format": "csv",
+    "delimiter": ",",
+    "header": true,
+    "multiline": false,
+    "schema_location": "/Volumes/fintech_finpay/default/vol_landing/metadata/schema/transactions_schema.json",
+    "checkpoint_path": "/Volumes/fintech_finpay/default/vol_landing/metadata/checkpoints/transactions/",
+    "partition_by": "transaction_date",
+    "target_table": "fintech_finpay.bronze.transactions",
+    "active": true
+  },
+  {
+    "source_name": "users",
+    "source_path": "/Volumes/fintech_finpay/default/vol_landing/users/",
+    "file_format": "csv",
+    "delimiter": "|",
+    "header": true,
+    "multiline": false,
+    "schema_location": "/Volumes/fintech_finpay/default/vol_landing/metadata/schema/users_schema.json",
+    "checkpoint_path": "/Volumes/fintech_finpay/default/vol_landing/metadata/checkpoints/users/",
+    "partition_by": "country",
+    "target_table": "fintech_finpay.bronze.users",
+    "active": true
+  },
+  {
+    "source_name": "merchants",
+    "source_path": "/Volumes/fintech_finpay/default/vol_landing/merchants/",
+    "file_format": "json",
+    "delimiter": null,
+    "header": null,
+    "multiline": true,
+    "schema_location": "/Volumes/fintech_finpay/default/vol_landing/metadata/schema/merchants_schema.json",
+    "checkpoint_path": "/Volumes/fintech_finpay/default/vol_landing/metadata/checkpoints/merchants/",
+    "partition_by": "country",
+    "target_table": "fintech_finpay.bronze.merchants",
+    "active": true
+  }
+]

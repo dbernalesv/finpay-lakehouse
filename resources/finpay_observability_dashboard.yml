@@ -1,0 +1,8 @@
+resources:
+  dashboards:
+    finpay_observability_dashboard:
+      display_name: "FinPay ETL Pipeline - Observability Dashboard"
+      file_path: ../src/dashboards/FinPay_ETL_Pipeline-Observability_Dashboard.lvdash.json
+      dataset_catalog: ${var.catalog}
+      dataset_schema: ${var.schema}
+      warehouse_id: ${var.sql_warehouse_id}

@@ -1,0 +1,12 @@
+{
+  "transaction_id": "STRING",
+  "user_id": "STRING",
+  "merchant_id": "STRING",
+  "channel": "STRING",
+  "transaction_type": "STRING",
+  "amount": "STRING",
+  "currency": "STRING",
+  "transaction_date": "STRING",
+  "status": "STRING",
+  "reference_id": "STRING"
+}

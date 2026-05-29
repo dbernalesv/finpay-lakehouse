@@ -1,0 +1,31 @@
+resources:
+  jobs:
+    finpay_ingestion_job:
+      name: finpay_ingestion_job
+      email_notifications:
+        on_start:
+          - diegobernales3@gmail.com
+        on_success:
+          - diegobernales3@gmail.com
+        on_failure:
+          - diegobernales3@gmail.com
+      notification_settings:
+        no_alert_for_skipped_runs: true
+        no_alert_for_canceled_runs: true
+      tasks:
+        - task_key: run_finpay_etl_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.finpay_etl_pipeline.id}
+            full_refresh: false
+          max_retries: 1
+          min_retry_interval_millis: 300000
+        - task_key: run_finpay_semantic_job
+          depends_on:
+            - task_key: run_finpay_etl_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.finpay_semantic_job.id}
+            full_refresh: false
+          max_retries: 1
+          min_retry_interval_millis: 300000
+      queue:
+        enabled: true

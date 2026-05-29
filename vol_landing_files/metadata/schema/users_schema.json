@@ -1,0 +1,10 @@
+{
+  "user_id": "STRING",
+  "full_name" : "STRING",
+  "document_id" : "STRING",
+  "email": "STRING",
+  "phone" : "STRING",
+  "country": "STRING",
+  "segment" : "STRING",
+  "registration_date" : "STRING"
+}

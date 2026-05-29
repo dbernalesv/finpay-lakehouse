@@ -1,0 +1,25 @@
+resources:
+  pipelines:
+    finpay_semantic_job:
+      name: finpay_semantic_job
+      libraries:
+        - glob:
+            include: ../src/bundle_proyecto_etl/transformations/**
+      schema: gold
+      continuous: false
+      development: false
+      photon: true
+      channel: CURRENT
+      catalog: fintech_finpay
+      serverless: true
+      event_log:
+        name: event_log_finpay_semantic_job
+        schema: observability
+        catalog: fintech_finpay
+      root_path: "../src/bundle_proyecto_etl"
+
+      environment:
+        dependencies:
+          # We include every dependency defined by pyproject.toml by defining an editable environment
+          # that points to the folder where pyproject.toml is deployed.
+          - --editable ${workspace.file_path}
